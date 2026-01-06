@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="admin-container" style="padding: 20px; max-width: 1200px; margin: 0 auto;">
+    <h1>Admin Dashboard</h1>
+
+    <button onclick="document.getElementById('addProductModal').style.display='block'" class="add-btn"
+        style="background-color: #f0c14b; border: 1px solid #a88734; padding: 10px 20px; cursor: pointer; margin-bottom: 20px;">Add
+        New Product</button>
+
+    <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+        <thead>
+            <tr style="background-color: #f3f3f3; text-align: left;">
+                <th style="padding: 10px; border: 1px solid #ddd;">ID</th>
+                <th style="padding: 10px; border: 1px solid #ddd;">Image</th>
+                <th style="padding: 10px; border: 1px solid #ddd;">Title</th>
+                <th style="padding: 10px; border: 1px solid #ddd;">Price</th>
+                <th style="padding: 10px; border: 1px solid #ddd;">Category</th>
+                <th style="padding: 10px; border: 1px solid #ddd;">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for product in products %}
+            <tr>
+                <td style="padding: 10px; border: 1px solid #ddd;">{{ product.id }}</td>
+                <td style="padding: 10px; border: 1px solid #ddd;"><img src="{{ product.image_url }}"
+                        alt="{{ product.title }}" style="width: 50px; height: 50px; object-fit: contain;"></td>
+                <td style="padding: 10px; border: 1px solid #ddd;">{{ product.title }}</td>
+                <td style="padding: 10px; border: 1px solid #ddd;">${{ product.price }}</td>
+                <td style="padding: 10px; border: 1px solid #ddd;">{{ product.category }}</td>
+                <td style="padding: 10px; border: 1px solid #ddd;">
+                    <button
+                        onclick="openEditModal('{{ product.id }}', '{{ product.title|replace("'", "\\'") }}', '{{ product.price }}', '{{ product.description|replace("'", "\\'")|replace('\n', ' ') }}', '{{ product.image_url }}', '{{ product.category }}', '{{ product.rating }}')"
+                        style="cursor: pointer; margin-right: 5px;">Edit</button>
+                    <form action="{{ url_for('delete_product', id=product.id) }}" method="POST" style="display:inline;"
+                        onsubmit="return confirm('Are you sure?');">
+                        <button type="submit" style="cursor: pointer; color: red;">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Add Product Modal -->
+<div id="addProductModal" class="modal"
+    style="display:none; position: fixed; z-index: 1; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.4);">
+    <div class="modal-content"
+        style="background-color: #fefefe; margin: 10% auto; padding: 20px; border: 1px solid #888; width: 50%; max-width: 500px;">
+        <span onclick="document.getElementById('addProductModal').style.display='none'"
+            style="color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer;">&times;</span>
+        <h2>Add New Product</h2>
+        <form action="{{ url_for('add_product') }}" method="POST" enctype="multipart/form-data"
+            style="display: flex; flex-direction: column; gap: 10px;">
+            <input type="text" name="title" placeholder="Product Title" required style="padding: 8px;">
+            <input type="number" step="0.01" name="price" placeholder="Price" required style="padding: 8px;">
+            <textarea name="description" placeholder="Description" required style="padding: 8px;"></textarea>
+
+            <label>Product Image (Upload OR URL)</label>
+            <input type="file" name="image_file" accept="image/*" style="padding: 8px;">
+            <input type="url" name="image_url" placeholder="Or Image URL" style="padding: 8px;">
+
+            <input type="text" name="category" placeholder="Category" required style="padding: 8px;">
+            <input type="number" step="0.1" min="0" max="5" name="rating" placeholder="Rating (0-5)" required
+                style="padding: 8px;">
+            <button type="submit"
+                style="background-color: #f0c14b; border: 1px solid #a88734; padding: 10px; cursor: pointer;">Add
+                Product</button>
+        </form>
+    </div>
+</div>
+
+<!-- Edit Product Modal -->
+<div id="editProductModal" class="modal"
+    style="display:none; position: fixed; z-index: 1; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.4);">
+    <div class="modal-content"
+        style="background-color: #fefefe; margin: 10% auto; padding: 20px; border: 1px solid #888; width: 50%; max-width: 500px;">
+        <span onclick="document.getElementById('editProductModal').style.display='none'"
+            style="color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer;">&times;</span>
+        <h2>Edit Product</h2>
+        <form id="editForm" action="" method="POST" enctype="multipart/form-data"
+            style="display: flex; flex-direction: column; gap: 10px;">
+            <input type="text" id="edit-title" name="title" placeholder="Product Title" required style="padding: 8px;">
+            <input type="number" step="0.01" id="edit-price" name="price" placeholder="Price" required
+                style="padding: 8px;">
+            <textarea id="edit-description" name="description" placeholder="Description" required
+                style="padding: 8px;"></textarea>
+
+            <label>Product Image (Upload OR URL)</label>
+            <input type="file" name="image_file" accept="image/*" style="padding: 8px;">
+            <input type="url" id="edit-image_url" name="image_url" placeholder="Or Image URL" style="padding: 8px;">
+
+            <input type="text" id="edit-category" name="category" placeholder="Category" required style="padding: 8px;">
+            <input type="number" step="0.1" min="0" max="5" id="edit-rating" name="rating" placeholder="Rating (0-5)"
+                required style="padding: 8px;">
+            <button type="submit"
+                style="background-color: #f0c14b; border: 1px solid #a88734; padding: 10px; cursor: pointer;">Save
+                Changes</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    function openEditModal(id, title, price, description, imageUrl, category, rating) {
+        document.getElementById('editForm').action = '/admin/edit/' + id;
+        document.getElementById('edit-title').value = title;
+        document.getElementById('edit-price').value = price;
+        document.getElementById('edit-description').value = description;
+        document.getElementById('edit-image_url').value = imageUrl;
+        document.getElementById('edit-category').value = category;
+        document.getElementById('edit-rating').value = rating;
+        document.getElementById('editProductModal').style.display = 'block';
+    }
+
+    // Close modals when clicking outside
+    window.onclick = function (event) {
+        if (event.target.classList.contains('modal')) {
+            event.target.style.display = "none";
+        }
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="product-detail-container">
+    <div class="detail-left">
+        <img src="{{ product.image_url }}" alt="{{ product.title }}" class="detail-img">
+    </div>
+    <div class="detail-info">
+        <h1>{{ product.title }}</h1>
+        <div class="product-rating">Rating: {{ product.rating }} / 5</div>
+        <div class="detail-price">${{ "%.2f"|format(product.price) }}</div>
+        <div class="stock-status">In Stock</div>
+        <p>{{ product.description }}</p>
+        <br>
+        <button class="btn btn-primary" onclick="addToCart({{ product.id }})">Add to Cart</button>
+        <button class="btn btn-secondary">Buy Now</button>
+    </div>
+</div>
+{% endblock %}

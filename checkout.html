@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="checkout-container" style="max-width: 800px; margin: 20px auto; padding: 20px;">
+    <h1>Checkout</h1>
+
+    <div style="display: flex; gap: 20px;">
+        <div style="flex: 2;">
+            <h3>Shipping Details</h3>
+            <form action="{{ url_for('checkout') }}" method="POST" id="checkout-form"
+                style="display: flex; flex-direction: column; gap: 10px;">
+                <input type="text" name="address" placeholder="Address" required style="padding: 10px;">
+                <input type="text" name="city" placeholder="City" required style="padding: 10px;">
+                <input type="text" name="zip" placeholder="ZIP Code" required style="padding: 10px;">
+                <input type="text" name="country" placeholder="Country" required style="padding: 10px;">
+
+                <h3>Payment (Simulated)</h3>
+                <input type="text" placeholder="Card Number" style="padding: 10px;">
+                <div style="display: flex; gap: 10px;">
+                    <input type="text" placeholder="MM/YY" style="padding: 10px; flex: 1;">
+                    <input type="text" placeholder="CVC" style="padding: 10px; flex: 1;">
+                </div>
+
+                <button type="submit"
+                    style="background-color: #f0c14b; border: 1px solid #a88734; padding: 10px; cursor: pointer; margin-top: 10px;">Place
+                    Order</button>
+            </form>
+        </div>
+
+        <div style="flex: 1; background-color: #f3f3f3; padding: 20px; height: fit-content;">
+            <h3>Order Summary</h3>
+            <p>Items: {{ cart_items|length }}</p>
+            <p>Total: ${{ "%.2f"|format(total) }}</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

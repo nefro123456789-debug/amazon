@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="cart-page">
+    <h1>Shopping Cart</h1>
+    {% if cart_items %}
+    {% for item in cart_items %}
+    <div class="cart-item-row">
+        <img src="{{ item.product.image_url }}" class="cart-item-img">
+        <div style="flex-grow:1">
+            <h3>{{ item.product.title }}</h3>
+            <div style="color:#B12704; font-weight:bold;">${{ "%.2f"|format(item.product.price) }}</div>
+            <div>Quantity: {{ item.quantity }}</div>
+            <button onclick="updateCart({{ item.id }}, 1)">+</button>
+            <button onclick="updateCart({{ item.id }}, -1)">-</button>
+            <button onclick="removeFromCart({{ item.id }})">Delete</button>
+        </div>
+    </div>
+    {% endfor %}
+    <div class="cart-summary">
+        Subtotal: ${{ "%.2f"|format(total) }}
+    </div>
+    <button class="btn btn-primary" style="float:right; margin-top:1rem;">Proceed to Checkout</button>
+    <button class="btn" onclick="clearCart()" style="margin-top:1rem;">Empty Cart</button>
+    {% else %}
+    <p>Your cart is empty.</p>
+    {% endif %}
+</div>
+
+<script>
+    function updateCart(id, change) {
+        fetch(`/update-cart/${id}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ change: change })
+        }).then(() => location.reload());
+    }
+
+    function removeFromCart(id) {
+        fetch(`/remove-from-cart/${id}`, { method: 'POST' }).then(() => location.reload());
+    }
+
+    function clearCart() {
+        fetch('/clear-cart', { method: 'POST' }).then(() => location.reload());
+    }
+</script>
+{% endblock %}

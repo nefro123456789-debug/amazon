@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="auth-container"
+    style="max-width: 400px; margin: 50px auto; padding: 20px; border: 1px solid #ddd; border-radius: 5px;">
+    <h2>Sign-In</h2>
+    <form action="{{ url_for('login') }}" method="POST" style="display: flex; flex-direction: column; gap: 15px;">
+        <div>
+            <label for="email">Email</label>
+            <input type="email" name="email" id="email" required style="width: 100%; padding: 8px; margin-top: 5px;">
+        </div>
+        <div>
+            <label for="password">Password</label>
+            <input type="password" name="password" id="password" required
+                style="width: 100%; padding: 8px; margin-top: 5px;">
+        </div>
+        <button type="submit"
+            style="background-color: #f0c14b; border: 1px solid #a88734; padding: 10px; cursor: pointer;">Sign
+            In</button>
+    </form>
+    <p style="margin-top: 15px; font-size: 12px;">
+        New to Amazon Clone? <a href="{{ url_for('signup') }}">Create your account</a>
+    </p>
+</div>
+{% endblock %}

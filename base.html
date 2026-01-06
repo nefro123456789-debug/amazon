@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amazon Clone</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+    <header>
+        <nav class="navbar">
+            <a href="{{ url_for('index') }}" class="logo">amazon<span>clone</span></a>
+
+            <div class="search-container">
+                <select class="search-select">
+                    <option value="all">All</option>
+                    <option value="electronics">Electronics</option>
+                    <option value="laptops">Laptops</option>
+                </select>
+                <form action="{{ url_for('index') }}" method="GET" style="flex-grow:1; display:flex;">
+                    <input type="text" name="search" id="search-input" placeholder="Search Amazon Clone">
+                    <button type="submit" class="search-btn">🔍</button>
+                </form>
+            </div>
+
+            <div class="nav-tools">
+                <div class="nav-item">
+                    {% if current_user.is_authenticated %}
+                    <span>Hello, {{ current_user.username }}</span>
+                    <strong>
+                        <a href="{{ url_for('logout') }}" style="color: white; text-decoration: none;">Sign Out</a>
+                    </strong>
+                    {% else %}
+                    <span>Hello, Sign in</span>
+                    <strong>
+                        <a href="{{ url_for('login') }}" style="color: white; text-decoration: none;">Account &
+                            Lists</a>
+                    </strong>
+                    {% endif %}
+                </div>
+                <div class="nav-item">
+                    {% if current_user.is_authenticated %}
+                    <span>Returns</span>
+                    <strong><a href="{{ url_for('user_orders') }}" style="color: white; text-decoration: none;">&
+                            Orders</a></strong>
+                    {% else %}
+                    <span>Returns</span>
+                    <strong>& Orders</strong>
+                    {% endif %}
+                </div>
+                {% if current_user.is_authenticated and current_user.is_admin %}
+                <div class="nav-item">
+                    <span>Admin</span>
+                    <strong><a href="{{ url_for('admin_dashboard') }}"
+                            style="color: white; text-decoration: none;">Dashboard</a></strong>
+                </div>
+                <div class="nav-item">
+                    <span>Admin</span>
+                    <strong><a href="{{ url_for('admin_orders') }}"
+                            style="color: white; text-decoration: none;">Orders</a></strong>
+                </div>
+                {% endif %}
+                <a href="{{ url_for('cart') }}" class="nav-item cart-icon">
+                    🛒
+                    <span class="cart-count">0</span>
+                    <strong>Cart</strong>
+                </a>
+            </div>
+        </nav>
+        <div class="sub-header">
+            <span>☰ All</span>
+            <span>Today's Deals</span>
+            <span>Customer Service</span>
+            <span>Registry</span>
+            <span>Gift Cards</span>
+            <span>Sell</span>
+        </div>
+    </header>
+
+    {% block content %}{% endblock %}
+
+    <script>
+        // Simple JS for interactivity
+        function addToCart(id) {
+            fetch(`/add-to-cart/${id}`, { method: 'POST' })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Added to cart!');
+                        location.reload(); // Simple reload to update cart count
+                    }
+                });
+        }
+    </script>
+</body>
+
+</html>

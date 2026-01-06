@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="admin-orders-container" style="max-width: 1200px; margin: 20px auto; padding: 20px;">
+    <h1>Manage Orders</h1>
+
+    <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+        <thead>
+            <tr style="background-color: #f3f3f3; text-align: left;">
+                <th style="padding: 10px; border: 1px solid #ddd;">Order ID</th>
+                <th style="padding: 10px; border: 1px solid #ddd;">User</th>
+                <th style="padding: 10px; border: 1px solid #ddd;">Date</th>
+                <th style="padding: 10px; border: 1px solid #ddd;">Total</th>
+                <th style="padding: 10px; border: 1px solid #ddd;">Status</th>
+                <th style="padding: 10px; border: 1px solid #ddd;">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in orders %}
+            <tr>
+                <td style="padding: 10px; border: 1px solid #ddd;">#{{ order.id }}</td>
+                <td style="padding: 10px; border: 1px solid #ddd;">{{ order.user.username }}<br><small>{{
+                        order.user.email }}</small></td>
+                <td style="padding: 10px; border: 1px solid #ddd;">{{ order.created_at.strftime('%Y-%m-%d %H:%M') }}
+                </td>
+                <td style="padding: 10px; border: 1px solid #ddd;">${{ "%.2f"|format(order.total_amount) }}</td>
+                <td style="padding: 10px; border: 1px solid #ddd;">
+                    <span
+                        style="padding: 5px 10px; border-radius: 15px; background-color: {% if order.status == 'Pending' %}#ffeeba{% elif order.status == 'Shipped' %}#c3e6cb{% else %}#f5c6cb{% endif %};">
+                        {{ order.status }}
+                    </span>
+                </td>
+                <td style="padding: 10px; border: 1px solid #ddd;">
+                    <form action="{{ url_for('update_order_status', id=order.id) }}" method="POST"
+                        style="display: flex; gap: 5px;">
+                        <select name="status" style="padding: 5px;">
+                            <option value="Pending" {% if order.status=='Pending' %}selected{% endif %}>Pending</option>
+                            <option value="Shipped" {% if order.status=='Shipped' %}selected{% endif %}>Shipped</option>
+                            <option value="Delivered" {% if order.status=='Delivered' %}selected{% endif %}>Delivered
+                            </option>
+                            <option value="Cancelled" {% if order.status=='Cancelled' %}selected{% endif %}>Cancelled
+                            </option>
+                        </select>
+                        <button type="submit" style="padding: 5px 10px; cursor: pointer;">Update</button>
+                    </form>
+                    <div style="margin-top: 10px; font-size: 12px;">
+                        <strong>Shipping:</strong> {{ order.shipping_details }}
+                    </div>
+                    <div style="margin-top: 5px; font-size: 12px;">
+                        <strong>Items:</strong>
+                        {% for item in order.items %}
+                        <div>{{ item.quantity }}x {{ item.product.title }}</div>
+                        {% endfor %}
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
